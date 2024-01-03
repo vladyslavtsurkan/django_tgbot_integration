@@ -46,10 +46,25 @@ def callback_main_menu(call: types.CallbackQuery, bot: TeleBot):
     with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
         data["crypto_currency"] = crypto_currency
 
+    client = AlternativeClientAPI()
+    if crypto_currency == "btc":
+        ticker = client.get_btc_ticker()
+    elif crypto_currency == "eth":
+        ticker = client.get_eth_ticker()
+    elif crypto_currency == "bnb":
+        ticker = client.get_bnb_ticker()
+    else:
+        raise ValueError(f"Unknown crypto currency: {crypto_currency}")
+
+    ticker = AlternativeClientAPITicker(ticker)
+    rates = CalculatorRates(ticker)
+    usd_to_crypto = rates.calculate_to_crypto(Decimal(1))
+    crypto_to_usd = rates.calculate_from_crypto(Decimal(1))
+
     bot.edit_message_text(
         f"Exchange rate: \n"
-        f"1 USD = 1 {crypto_currency}\n"
-        f"1 {crypto_currency} = 1 USD",
+        f"1 USD = {usd_to_crypto} {crypto_currency}\n"
+        f"1 {crypto_currency} = {crypto_to_usd} USD",
         call.message.chat.id,
         call.message.message_id,
         reply_markup=get_crypto_currency_menu_keyboard(crypto_currency.upper()),
