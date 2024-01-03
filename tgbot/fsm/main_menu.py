@@ -27,7 +27,8 @@ def send_main_menu(message: types.Message, bot: TeleBot):
     """Send main menu."""
     bot.send_message(
         message.chat.id,
-        "Main Menu",
+        "Main Menu\n\n"
+        "Please, choose crypto currency:",
         reply_markup=get_main_menu_keyboard()
     )
     bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
