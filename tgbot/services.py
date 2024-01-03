@@ -13,7 +13,7 @@ def is_valid_phone_number(phone_number: str) -> bool:
 
 
 class AlternativeClientAPITicker:
-    def __init__(self, ticker: dict[str, str]):
+    def __init__(self, ticker):
         self.ticker = ticker
 
     @property
@@ -37,7 +37,7 @@ class AlternativeClientAPI:
     def __init__(self):
         self.base_url = "https://api.alternative.me/v1"
 
-    def _get_ticker(self, crypto_currency_id: str) -> dict[str, str]:
+    def _get_ticker(self, crypto_currency_id: str):
         url = f"{self.base_url}/ticker/{crypto_currency_id}/"
         response = requests.get(url)
         return response.json()[0]
