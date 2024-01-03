@@ -1,3 +1,4 @@
+"""Registration finite state machine."""
 from telebot.handler_backends import State, StatesGroup
 from telebot.types import Message
 from telebot import TeleBot

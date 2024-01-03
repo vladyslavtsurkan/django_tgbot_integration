@@ -5,6 +5,7 @@ import phonenumbers
 
 
 def is_valid_phone_number(phone_number: str) -> bool:
+    """Check if phone number is valid."""
     try:
         phone_number = phonenumbers.parse(phone_number)
         return phonenumbers.is_valid_number(phone_number)
@@ -13,6 +14,7 @@ def is_valid_phone_number(phone_number: str) -> bool:
 
 
 class AlternativeClientAPITicker:
+    """Class for ticker from Alternative API."""
     def __init__(self, ticker):
         self.ticker = ticker
 
@@ -34,6 +36,7 @@ class AlternativeClientAPITicker:
 
 
 class AlternativeClientAPI:
+    """Alternative client for CoinMarketCap API."""
     def __init__(self):
         self.base_url = "https://api.alternative.me/v1"
 
@@ -53,6 +56,7 @@ class AlternativeClientAPI:
 
 
 class CalculatorRates:
+    """Calculate exchange rates."""
     def __init__(self, ticker: AlternativeClientAPITicker):
         self.ticker = ticker
 

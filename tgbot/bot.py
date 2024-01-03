@@ -7,7 +7,7 @@ from tgbot.utils import set_my_commands
 
 
 def create_bot():
-    """Start the bot."""
+    """Create and return the bot."""
     storage = StateRedisStorage(
         host=settings.BOT_REDIS_HOST,
         port=settings.BOT_REDIS_PORT,

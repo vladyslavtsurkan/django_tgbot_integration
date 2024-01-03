@@ -1,3 +1,4 @@
+"""FSM for main menu."""
 from decimal import Decimal
 
 from telebot import types, TeleBot
@@ -41,6 +42,7 @@ def start_main_menu(message: types.Message, bot: TeleBot):
 
 
 def callback_main_menu(call: types.CallbackQuery, bot: TeleBot):
+    """Handle main menu."""
     crypto_currency = call.data.split("_")[2]
 
     with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
@@ -74,6 +76,7 @@ def callback_main_menu(call: types.CallbackQuery, bot: TeleBot):
 
 
 def callback_crypto_currency_menu(call: types.CallbackQuery, bot: TeleBot):
+    """Handle crypto currency menu."""
     call_list = call.data.split("_")
     operation = "_".join(call_list[2:])
 
@@ -108,6 +111,7 @@ def callback_crypto_currency_menu(call: types.CallbackQuery, bot: TeleBot):
 
 
 def calculator(message: types.Message, bot: TeleBot):
+    """Calculate exchange rate."""
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         crypto_currency: str = data["crypto_currency"]
         operation: str = data["operation"]
@@ -147,6 +151,7 @@ def calculator(message: types.Message, bot: TeleBot):
 
 
 def register_handlers(bot: TeleBot):
+    """Register handlers for main menu."""
     bot.register_message_handler(
         start_main_menu,
         pass_bot=True,
