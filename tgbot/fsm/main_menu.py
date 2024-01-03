@@ -23,8 +23,18 @@ class MainMenuFSM(StatesGroup):
     calculator = State()
 
 
-def start_main_menu(message: types.Message, bot: TeleBot):
+def send_main_menu(message: types.Message, bot: TeleBot):
     """Send main menu."""
+    bot.send_message(
+        message.chat.id,
+        "Main Menu",
+        reply_markup=get_main_menu_keyboard()
+    )
+    bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
+
+
+def start_main_menu(message: types.Message, bot: TeleBot):
+    """Start main menu FSM."""
     is_registered = is_account_registered(message.from_user.id)
     if not is_registered:
         bot.send_message(
@@ -33,12 +43,7 @@ def start_main_menu(message: types.Message, bot: TeleBot):
         )
         return
 
-    bot.send_message(
-        message.chat.id,
-        "Main Menu",
-        reply_markup=get_main_menu_keyboard()
-    )
-    bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
+    send_main_menu(message, bot)
 
 
 def callback_main_menu(call: types.CallbackQuery, bot: TeleBot):
@@ -65,8 +70,8 @@ def callback_main_menu(call: types.CallbackQuery, bot: TeleBot):
 
     bot.edit_message_text(
         f"Exchange rate: \n"
-        f"1 USD = {usd_to_crypto} {crypto_currency}\n"
-        f"1 {crypto_currency} = {crypto_to_usd} USD",
+        f"1 USD = {usd_to_crypto} {crypto_currency.upper()}\n"
+        f"1 {crypto_currency.upper()} = {crypto_to_usd} USD",
         call.message.chat.id,
         call.message.message_id,
         reply_markup=get_crypto_currency_menu_keyboard(crypto_currency.upper()),
@@ -84,7 +89,7 @@ def callback_crypto_currency_menu(call: types.CallbackQuery, bot: TeleBot):
         bot.delete_message(call.message.chat.id, call.message.id)
         bot.reset_data(call.from_user.id, call.message.chat.id)
         bot.set_state(call.from_user.id, MainMenuFSM.main_menu, call.message.chat.id)
-        start_main_menu(call.message, bot)
+        send_main_menu(call.message, bot)
         return
 
     with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
@@ -147,7 +152,7 @@ def calculator(message: types.Message, bot: TeleBot):
 
     bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
     bot.reset_data(message.from_user.id, message.chat.id)
-    start_main_menu(message, bot)
+    send_main_menu(message, bot)
 
 
 def register_handlers(bot: TeleBot):
