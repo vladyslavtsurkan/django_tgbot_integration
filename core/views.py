@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, UpdateView, DeleteView
 
@@ -5,7 +6,7 @@ from core.forms import TelegramAccountForm
 from core.models import TelegramAccount
 
 
-class TelegramAccountCreateListView(ListView, FormView):
+class TelegramAccountCreateListView(UserPassesTestMixin, ListView, FormView):
     model = TelegramAccount
     template_name = "core/telegram_accounts.html"
     form_class = TelegramAccountForm
@@ -39,15 +40,24 @@ class TelegramAccountCreateListView(ListView, FormView):
         self.object_list = self.get_queryset()
         return super().render_to_response(self.get_context_data(form=form))
 
+    def test_func(self):
+        return self.request.user and self.request.user.is_superuser
 
-class TelegramAccountUpdateView(UpdateView):
+
+class TelegramAccountUpdateView(UserPassesTestMixin, UpdateView):
     model = TelegramAccount
     template_name = "core/telegram_account_update.html"
     form_class = TelegramAccountForm
     success_url = reverse_lazy("core:telegram_accounts")
+
+    def test_func(self):
+        return self.request.user and self.request.user.is_superuser
 
 
 class TelegramAccountDeleteView(DeleteView):
     model = TelegramAccount
     template_name = "core/telegram_account_delete.html"
     success_url = reverse_lazy("core:telegram_accounts")
+
+    def test_func(self):
+        return self.request.user and self.request.user.is_superuser
