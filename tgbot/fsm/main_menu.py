@@ -1,5 +1,5 @@
 """FSM for main menu."""
-from decimal import Decimal
+from decimal import Decimal, DecimalException
 
 from telebot import types, TeleBot
 from telebot.handler_backends import State, StatesGroup
@@ -132,28 +132,35 @@ def calculator(message: types.Message, bot: TeleBot):
     else:
         raise ValueError(f"Unknown crypto currency: {crypto_currency}")
 
-    ticker = AlternativeClientAPITicker(ticker)
-    rates = CalculatorRates(ticker)
+    try:
+        ticker = AlternativeClientAPITicker(ticker)
+        rates = CalculatorRates(ticker)
 
-    if operation == "calculate_to_crypto":
-        amount = Decimal(message.text)
-        result = rates.calculate_to_crypto(amount)
+        if operation == "calculate_to_crypto":
+            amount = Decimal(message.text)
+            result = rates.calculate_to_crypto(amount)
+            bot.send_message(
+                message.chat.id,
+                f"{amount} USD = {result} {crypto_currency.upper()}"
+            )
+
+        elif operation == "calculate_from_crypto":
+            amount = Decimal(message.text)
+            result = rates.calculate_from_crypto(amount)
+            bot.send_message(
+                message.chat.id,
+                f"{amount} {crypto_currency.upper()} = {result} USD"
+            )
+
+        bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
+        bot.reset_data(message.from_user.id, message.chat.id)
+        send_main_menu(message, bot)
+
+    except DecimalException:
         bot.send_message(
             message.chat.id,
-            f"{amount} USD = {result} {crypto_currency.upper()}"
+            "Incorrect amount. Please, try again."
         )
-
-    elif operation == "calculate_from_crypto":
-        amount = Decimal(message.text)
-        result = rates.calculate_from_crypto(amount)
-        bot.send_message(
-            message.chat.id,
-            f"{amount} {crypto_currency.upper()} = {result} USD"
-        )
-
-    bot.set_state(message.from_user.id, MainMenuFSM.main_menu, message.chat.id)
-    bot.reset_data(message.from_user.id, message.chat.id)
-    send_main_menu(message, bot)
 
 
 def register_handlers(bot: TeleBot):

@@ -38,10 +38,10 @@ def start_registration(message: Message, bot: TeleBot):
 
 def registration_first_name(message: Message, bot: TeleBot):
     """Save user's first name and ask for last name."""
-    if len(message.text) < 5:
+    if len(message.text) < 3 or len(message.text) > 50:
         bot.send_message(
             message.chat.id,
-            "First name is too short (minimum 5 characters). Please, enter your first name."
+            "First name is too short or too long (minimum 3 characters, maximum 50 characters)."
         )
         return
 
@@ -56,10 +56,10 @@ def registration_first_name(message: Message, bot: TeleBot):
 
 def registration_last_name(message: Message, bot: TeleBot):
     """Save user's last name and ask for phone number."""
-    if len(message.text) < 5:
+    if len(message.text) < 3 or len(message.text) > 50:
         bot.send_message(
             message.chat.id,
-            "Last name is too short (minimum 5 characters). Please, enter your last name."
+            "Last name is too short or too long (minimum 3 characters, maximum 50 characters)."
         )
         return
 
